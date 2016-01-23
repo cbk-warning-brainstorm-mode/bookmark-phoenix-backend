@@ -2,7 +2,12 @@ defmodule Bookmark.BookmarkControllerTest do
   use Bookmark.ConnCase
 
   alias Bookmark.Bookmark
-  @valid_attrs %{descricao: "some content", link: "some content", nome: "some content"}
+  @valid_attrs %{
+    descricao: "some content",
+    link: "some content",
+    nome: "some content",
+    tags: ["Tag1", "Tag2"]
+  }
   @invalid_attrs %{}
 
   setup do
@@ -16,12 +21,14 @@ defmodule Bookmark.BookmarkControllerTest do
   end
 
   test "shows chosen resource", %{conn: conn} do
-    bookmark = Repo.insert! %Bookmark{}
+    bookmark = %Bookmark{} |> Repo.insert! |> Repo.preload(:tags)
     conn = get conn, bookmark_path(conn, :show, bookmark)
     assert json_response(conn, 200)["data"] == %{"id" => bookmark.id,
       "nome" => bookmark.nome,
       "link" => bookmark.link,
-      "descricao" => bookmark.descricao}
+      "descricao" => bookmark.descricao,
+      "tags" => Enum.map(bookmark.tags, &(&1.nome))
+    }
   end
 
   test "does not show resource and instead throw error when id is nonexistent", %{conn: conn} do
@@ -32,8 +39,9 @@ defmodule Bookmark.BookmarkControllerTest do
 
   test "creates and renders resource when data is valid", %{conn: conn} do
     conn = post conn, bookmark_path(conn, :create), bookmark: @valid_attrs
-    assert json_response(conn, 201)["data"]["id"]
-    assert Repo.get_by(Bookmark, @valid_attrs)
+    id = json_response(conn, 201)["data"]["id"]
+    assert id
+    assert Repo.get!(Bookmark, id)
   end
 
   test "does not create resource and renders errors when data is invalid", %{conn: conn} do
@@ -44,8 +52,9 @@ defmodule Bookmark.BookmarkControllerTest do
   test "updates and renders chosen resource when data is valid", %{conn: conn} do
     bookmark = Repo.insert! %Bookmark{}
     conn = put conn, bookmark_path(conn, :update, bookmark), bookmark: @valid_attrs
-    assert json_response(conn, 200)["data"]["id"]
-    assert Repo.get_by(Bookmark, @valid_attrs)
+    id = json_response(conn, 200)["data"]["id"]
+    assert id
+    assert Repo.get!(Bookmark, id)
   end
 
   test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do

@@ -2,7 +2,7 @@ defmodule Bookmark.Bookmark do
   use Bookmark.Web, :model
 
   schema "bookmarks" do
-    has_many :bookmark_tags, Bookmark.BookmarkTag
+    has_many :bookmark_tags, Bookmark.BookmarkTag, on_replace: :delete
     has_many :tags, through: [:bookmark_tags, :tag]
 
     field :nome, :string
@@ -30,9 +30,16 @@ defmodule Bookmark.Bookmark do
 
   defp create_relations(changeset) do
     relations =
-      changeset.params["tags"]
-      |> Enum.map(&(%Bookmark.BookmarkTag{tag: &1}))
+      changeset.params
+      |> Map.get("tags", [])
+      |> Enum.map(&create_bookmark_tag(&1, changeset.model))
 
     put_assoc(changeset, :bookmark_tags, relations)
+  end
+
+  defp create_bookmark_tag(tag, %{id: nil}), do: %Bookmark.BookmarkTag{tag: tag}
+
+  defp create_bookmark_tag(tag, bookmark) do
+    %Bookmark.BookmarkTag{tag_id: tag.id, bookmark: bookmark}
   end
 end

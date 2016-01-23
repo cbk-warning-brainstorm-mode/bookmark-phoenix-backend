@@ -8,7 +8,7 @@ defmodule Bookmark.BookmarkTag do
     timestamps
   end
 
-  @required_fields ~w(bookmark tag)
+  @required_fields ~w(bookmark_id tag_id)
   @optional_fields ~w()
 
   @doc """
