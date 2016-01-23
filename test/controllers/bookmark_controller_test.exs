@@ -39,7 +39,9 @@ defmodule Bookmark.BookmarkControllerTest do
 
   test "creates and renders resource when data is valid", %{conn: conn} do
     conn = post conn, bookmark_path(conn, :create), bookmark: @valid_attrs
+
     id = json_response(conn, 201)["data"]["id"]
+
     assert id
     assert Repo.get!(Bookmark, id)
   end
@@ -52,7 +54,9 @@ defmodule Bookmark.BookmarkControllerTest do
   test "updates and renders chosen resource when data is valid", %{conn: conn} do
     bookmark = Repo.insert! %Bookmark{}
     conn = put conn, bookmark_path(conn, :update, bookmark), bookmark: @valid_attrs
+
     id = json_response(conn, 200)["data"]["id"]
+
     assert id
     assert Repo.get!(Bookmark, id)
   end
