@@ -9,7 +9,7 @@ use Mix.Config
 config :bookmark, Bookmark.Endpoint,
   url: [host: "localhost"],
   root: Path.dirname(__DIR__),
-  secret_key_base: "q/qiTdoc2MZeUXeLYgNjljIO86pv9ANl7Xd0ScM509QEDyV4QdIZ5xy4In01/j+j",
+  secret_key_base: "yZNC6K0aZRKKc/7IZ2RJHWSXmqKQt1uZYGWEjtDd5vqZhOUe4gmYBtkWaGlzD0uz",
   render_errors: [accepts: ~w(json)],
   pubsub: [name: Bookmark.PubSub,
            adapter: Phoenix.PubSub.PG2]

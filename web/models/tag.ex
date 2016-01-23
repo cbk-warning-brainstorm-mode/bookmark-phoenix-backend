@@ -2,8 +2,8 @@ defmodule Bookmark.Tag do
   use Bookmark.Web, :model
 
   schema "tags" do
-    has_many :bookmark_tags, Bookmark.BookmarkTag
-    has_many :bookmarks, through: [:bookmark_tags, :bookmark]
+    has_many :tag_bookmarks, Bookmark.BookmarkTag
+    has_many :bookmarks, through: [:tag_bookmarks, :bookmark]
 
     field :nome, :string
 

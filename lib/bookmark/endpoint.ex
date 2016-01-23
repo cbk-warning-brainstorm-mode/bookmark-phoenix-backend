@@ -31,7 +31,7 @@ defmodule Bookmark.Endpoint do
   plug Plug.Session,
     store: :cookie,
     key: "_bookmark_key",
-    signing_salt: "E9N/1CzL"
+    signing_salt: "29xRwhV8"
 
   plug Bookmark.Router
 end

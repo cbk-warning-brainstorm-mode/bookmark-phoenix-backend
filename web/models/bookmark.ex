@@ -24,14 +24,15 @@ defmodule Bookmark.Bookmark do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)
+    |> validate_length(:descricao, min: 3)
     |> create_relations
   end
 
   defp create_relations(changeset) do
-    tags = changeset.params["tags"]
+    relations =
+      changeset.params["tags"]
+      |> Enum.map(&(%Bookmark.BookmarkTag{tag: &1}))
 
-    relations = Enum.map(tags, &(%Bookmark.BookmarkTag{tag_id: &1.id}))
-
-    put_change(changeset, :bookmark_tags, relations)
+    put_assoc(changeset, :bookmark_tags, relations)
   end
 end

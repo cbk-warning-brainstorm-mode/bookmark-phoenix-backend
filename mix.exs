@@ -30,7 +30,7 @@ defmodule Bookmark.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [{:phoenix, "~> 1.0.4"},
+    [{:phoenix, "~> 1.0.3"},
      {:phoenix_ecto, "~> 1.1"},
      {:sqlite_ecto, ">= 0.0.0"},
      {:cowboy, "~> 1.0"}]

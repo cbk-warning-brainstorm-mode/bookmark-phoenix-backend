@@ -36,6 +36,6 @@ defmodule Bookmark.ConnCase do
       Ecto.Adapters.SQL.restart_test_transaction(Bookmark.Repo, [])
     end
 
-    {:ok, conn: Phoenix.ConnTest.conn()}
+    :ok
   end
 end

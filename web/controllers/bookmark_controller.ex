@@ -11,6 +11,8 @@ defmodule Bookmark.BookmarkController do
   end
 
   def create(conn, %{"bookmark" => bookmark_params}) do
+    bookmark_params = Map.update(bookmark_params, "tags", [], &fetch_tags/1)
+
     changeset = BookmarkModel.changeset(%BookmarkModel{}, bookmark_params)
 
     case Repo.insert(changeset) do
@@ -18,7 +20,7 @@ defmodule Bookmark.BookmarkController do
         conn
         |> put_status(:created)
         |> put_resp_header("location", bookmark_path(conn, :show, bookmark))
-        |> render("show.json", bookmark: bookmark)
+        |> render("show.json", bookmark: Repo.preload(bookmark, :tags))
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
@@ -28,16 +30,18 @@ defmodule Bookmark.BookmarkController do
 
   def show(conn, %{"id" => id}) do
     bookmark = Repo.get!(BookmarkModel, id)
-    render(conn, "show.json", bookmark: bookmark)
+    render(conn, "show.json", bookmark: Repo.preload(bookmark, :tags))
   end
 
   def update(conn, %{"id" => id, "bookmark" => bookmark_params}) do
+    bookmark_params = Map.update(bookmark_params, "tags", [], &fetch_tags/1)
+
     bookmark = Repo.get!(BookmarkModel, id)
     changeset = BookmarkModel.changeset(bookmark, bookmark_params)
 
     case Repo.update(changeset) do
       {:ok, bookmark} ->
-        render(conn, "show.json", bookmark: bookmark)
+        render(conn, "show.json", bookmark: Repo.preload(bookmark, :tags))
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
@@ -53,5 +57,14 @@ defmodule Bookmark.BookmarkController do
     Repo.delete!(bookmark)
 
     send_resp(conn, :no_content, "")
+  end
+
+  defp fetch_tags(tags) do
+    Enum.map(tags, fn nome ->
+      case Bookmark.Repo.get_by(Bookmark.Tag, nome: nome) do
+         nil -> %Bookmark.Tag{nome: nome}
+         tag -> tag
+      end
+    end)
   end
 end
