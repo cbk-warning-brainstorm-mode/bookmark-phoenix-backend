@@ -37,7 +37,7 @@ defmodule Bookmark.Bookmark do
     put_assoc(changeset, :bookmark_tags, relations)
   end
 
-  defp create_bookmark_tag(tag, %{id: nil}), do: %Bookmark.BookmarkTag{tag_id: tag.id}
+  defp create_bookmark_tag(tag, %{id: nil}), do: %Bookmark.BookmarkTag{tag: tag}
   defp create_bookmark_tag(tag, bookmark) do
      %Bookmark.BookmarkTag{tag_id: tag.id, bookmark_id: bookmark.id}
   end
